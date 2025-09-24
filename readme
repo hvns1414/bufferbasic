@@ -1,0 +1,150 @@
+Quick summary
+
+Server listens on 127.0.0.1:9090 (or change to 0.0.0.0 if you want LAN access).
+
+Client can send a message multiplied by a count (payload = message * count).
+
+Colorized client output via colorama.
+
+optparse used for CLI options.
+
+requirements.txt contains colorama, optparse, socket (you asked these to be listed; note below).
+
+Requirements
+
+Python 3.x installed
+
+pip available
+
+Note: optparse and socket are standard Python libraries (included with Python). They are nevertheless listed in requirements.txt because you requested it. Installing them via pip may be unnecessary but harmless (if pip packages exist).
+
+requirements.txt contents (as requested):
+
+colorama
+optparse
+socket
+
+Installation
+Linux / macOS
+
+Make script executable and run:
+
+chmod +x install.sh
+./install.sh
+
+
+install.sh installs packages one-by-one:
+
+updates pip
+
+pip3 install colorama
+
+pip3 install optparse
+
+pip3 install socket
+
+Windows
+
+Double-click install.bat or run in an elevated CMD:
+
+install.bat
+
+
+install.bat runs:
+
+python -m pip install --upgrade pip
+
+pip install colorama
+
+pip install optparse
+
+pip install socket
+
+How to run
+Start the server
+
+In one terminal:
+
+python server_overflow.py
+
+
+Server prints listening info. Default server settings:
+
+Host: 127.0.0.1
+
+Port: 9090
+
+Buffer size set in the server script (e.g. BUFFER_SIZE = 16) — change there to simulate different buffer limits.
+
+Run the client
+
+In another terminal (examples):
+
+# default: connect to 127.0.0.1:9090, message "Hello", count 1
+python client_overflow_color.py
+
+# custom IP/port
+python client_overflow_color.py -i 127.0.0.1 -p 9090
+
+# send message "A" repeated 32 times (message * count)
+python client_overflow_color.py -m "A" -c 32
+
+# combine
+python client_overflow_color.py -i 127.0.0.1 -p 9090 -m "BAD" -c 10
+
+
+Client CLI options:
+
+-i / --ip : target IP (default 127.0.0.1)
+
+-p / --port : target port (default 9090)
+
+-m / --message : message to send (default Hello)
+
+-c / --count : multiplier for message length (integer)
+
+Blacklist
+
+blacklist.log contains IP addresses (one per line).
+
+Server checks incoming connection IPs against this file; blacklisted IPs are immediately closed.
+
+Example blacklist.log:
+
+# blacklisted IPs
+192.168.1.10
+10.0.0.50
+
+Firewall & Port Forwarding (brief)
+
+For LAN access: bind server to 0.0.0.0 and use the machine's LAN IP (e.g. 192.168.1.50). Open port in OS firewall for TCP 9090 (or your chosen port).
+
+For Internet access: configure your router to forward external port 9090 to your server's LAN IP: 9090 -> 192.168.x.x:9090. Then clients can connect to your public IP.
+
+Be careful: exposing test services to the Internet is risky. Prefer LAN or VPN (Hamachi, Tailscale) for safe remote testing.
+
+Safety & Legal
+
+Only run tests on machines you own or explicitly have permission to test. Unauthorized testing is illegal.
+
+This project is for educational and controlled lab use only. Do not use these tools against third parties or public servers.
+
+Python-based simulation demonstrates the concept of buffer-size limits; Python does not produce low-level memory corruption like C/C++ — that requires native languages and is dangerous to test on production systems.
+
+Troubleshooting
+
+If ConnectionRefusedError: server not running, wrong IP/port, or firewall blocking.
+
+If ModuleNotFoundError: colorama: ensure you ran the appropriate install script or pip install colorama.
+
+If you want to allow LAN clients but they still cannot connect: verify server is bound to 0.0.0.0, check ipconfig / ifconfig for server IP, and check OS firewall settings.
+
+Example workflow (recommended)
+
+Run install.sh / install.bat.
+
+Start python server_overflow.py in terminal A.
+
+From terminal B on the same machine or same LAN: python client_overflow_color.py -m "A" -c 32.
+
+Observe server logs and client colored output
